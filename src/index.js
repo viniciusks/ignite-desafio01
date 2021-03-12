@@ -1,7 +1,7 @@
-const express = require('express');
-const cors = require('cors');
+const express = require("express");
+const cors = require("cors");
 
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 
 const app = express();
 
@@ -15,9 +15,9 @@ function checksExistsUserAccount(request, response, next) {
 
   const user = users.find((user) => user.username === username);
 
-  if(!user) {
+  if (!user) {
     return response.status(400).json({
-      error: "User not found!"
+      error: "User not found!",
     });
   }
 
@@ -26,14 +26,14 @@ function checksExistsUserAccount(request, response, next) {
   return next();
 }
 
-app.post('/users', (request, response) => {
+app.post("/users", (request, response) => {
   const { name, username } = request.body;
 
   const userAlreadyExists = users.some((user) => user.username == username);
 
-  if(userAlreadyExists) {
+  if (userAlreadyExists) {
     return response.status(400).json({
-      error: "User already exists!"
+      error: "User already exists!",
     });
   }
 
@@ -41,23 +41,23 @@ app.post('/users', (request, response) => {
     id: uuidv4(),
     name,
     username,
-    todos: []
-  }
+    todos: [],
+  };
 
   users.push(userInformation);
 
   return response.status(201).json({
-    message: "Successfully Inserted!"
+    message: "Successfully Inserted!",
   });
 });
 
-app.get('/todos', checksExistsUserAccount, (request, response) => {
+app.get("/todos", checksExistsUserAccount, (request, response) => {
   const { user } = request;
 
   return response.json(user.todos);
 });
 
-app.post('/todos', checksExistsUserAccount, (request, response) => {
+app.post("/todos", checksExistsUserAccount, (request, response) => {
   const { user } = request;
   const { title, deadline } = request.body;
 
@@ -65,25 +65,25 @@ app.post('/todos', checksExistsUserAccount, (request, response) => {
     id: uuidv4(),
     title,
     deadline: new Date(deadline),
-    created_at: new Date()
-  }
+    created_at: new Date(),
+  };
 
   user.todos.push(newToDo);
 
   return response.status(201).json({
-    message: "Successfully insert ToDo!"
+    message: "Successfully insert ToDo!",
   });
 });
 
-app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
+app.put("/todos/:id", checksExistsUserAccount, (request, response) => {
   // Complete aqui
 });
 
-app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
+app.patch("/todos/:id/done", checksExistsUserAccount, (request, response) => {
   // Complete aqui
 });
 
-app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
+app.delete("/todos/:id", checksExistsUserAccount, (request, response) => {
   // Complete aqui
 });
 
