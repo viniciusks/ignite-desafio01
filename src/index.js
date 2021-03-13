@@ -129,7 +129,24 @@ app.patch("/todos/:id/done", checksExistsUserAccount, (request, response) => {
 });
 
 app.delete("/todos/:id", checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const { user } = request;
+  const { id } = request.params;
+
+  const todosUser = user.todos;
+
+  const deleteExistisTodo = todosUser.find((todo) => todo.id === id);
+
+  todosUser.splice(deleteExistisTodo, 1);
+
+  if (!deleteExistisTodo) {
+    return response.status(400).json({
+      error: "ToDo not exists!",
+    });
+  }
+
+  return response.status(201).json({
+    message: "Successfully delete ToDo!",
+  });
 });
 
 module.exports = app;
