@@ -64,6 +64,7 @@ app.post("/todos", checksExistsUserAccount, (request, response) => {
   const newToDo = {
     id: uuidv4(),
     title,
+    done: false,
     deadline: new Date(deadline),
     created_at: new Date(),
   };
@@ -91,7 +92,6 @@ app.put("/todos/:id", checksExistsUserAccount, (request, response) => {
     }
   });
 
-  console.log(checkExistisTodo);
   if (!checkExistisTodo) {
     return response.status(400).json({
       error: "ToDo not exists!",
@@ -104,7 +104,28 @@ app.put("/todos/:id", checksExistsUserAccount, (request, response) => {
 });
 
 app.patch("/todos/:id/done", checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  const { user } = request;
+  const { id } = request.params;
+
+  const todosUser = user.todos;
+
+  const checkExistisTodo = todosUser.find((todo) => todo.id === id);
+
+  todosUser.find((todo) => {
+    if (todo.id === id) {
+      todo.done = true;
+    }
+  });
+
+  if (!checkExistisTodo) {
+    return response.status(400).json({
+      error: "ToDo not exists!",
+    });
+  }
+
+  return response.status(201).json({
+    message: "Successfully update ToDo!",
+  });
 });
 
 app.delete("/todos/:id", checksExistsUserAccount, (request, response) => {
